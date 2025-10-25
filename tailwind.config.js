@@ -4,16 +4,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        ramen: {
-          red: '#D7263D',
-          dark: '#0B0A0A',
-          charcoal: '#111113',
-          cream: '#FFF3E0',
-          beige: '#F7E7CE',
-          gold: '#E0A106',
-          sesame: '#D1C7B7',
-          seaweed: '#1F2937',
-          kimchi: '#B81D24'
+        terraza: {
+          beige: '#FFF4E6',
+          light: '#FFF9F0',
+          cream: '#FFFDF9',
+          taupe: '#9B7D4A',
+          brown: '#8B6F47',
+          dark: '#5A4A35',
+          accent: '#D97757',
+          subtle: '#F5E8D6',
+          warm: '#FFE8D1',
+          sun: '#FFB84D'
         }
       },
       fontFamily: {

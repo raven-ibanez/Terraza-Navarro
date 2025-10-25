@@ -26,6 +26,10 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, totalPrice, onBack }) =>
   const [referenceNumber, setReferenceNumber] = useState('');
   const [notes, setNotes] = useState('');
 
+  // Calculate takeout box fee for pickup and delivery
+  const takeoutBoxFee = (serviceType === 'pickup' || serviceType === 'delivery') ? 10 : 0;
+  const finalTotalPrice = totalPrice + takeoutBoxFee;
+
   React.useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [step]);
@@ -60,7 +64,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, totalPrice, onBack }) =>
       : '';
     
     const orderDetails = `
-🛒 ClickEats ORDER
+🛒 Terraza Navarro ORDER
 
 👤 Customer: ${customerName}
 📞 Contact: ${contactNumber}
@@ -87,19 +91,22 @@ ${cartItems.map(item => {
   return itemDetails;
 }).join('\n')}
 
-💰 TOTAL: ₱${totalPrice}
+💰 Subtotal: ₱${totalPrice.toFixed(2)}
+${takeoutBoxFee > 0 ? `📦 Takeout Box Fee: ₱${takeoutBoxFee.toFixed(2)}` : ''}
 ${serviceType === 'delivery' ? `🛵 DELIVERY FEE:` : ''}
+
+💰 TOTAL: ₱${finalTotalPrice.toFixed(2)}
 
 💳 Payment: ${selectedPaymentMethod?.name || paymentMethod}
 📸 Payment Screenshot: Please attach your payment receipt screenshot
 
 ${notes ? `📝 Notes: ${notes}` : ''}
 
-Please confirm this order to proceed. Thank you for choosing ClickEats! 🥟
+Please confirm this order to proceed. Thank you for choosing Terraza Navarro! 🥟
     `.trim();
 
     const encodedMessage = encodeURIComponent(orderDetails);
-    const messengerUrl = `https://m.me/61579693577478?text=${encodedMessage}`;
+    const messengerUrl = `https://m.me/582446811628555?text=${encodedMessage}`;
     
     window.open(messengerUrl, '_blank');
     
@@ -149,10 +156,20 @@ Please confirm this order to proceed. Thank you for choosing ClickEats! 🥟
               ))}
             </div>
             
-            <div className="border-t border-red-200 pt-4">
-              <div className="flex items-center justify-between text-2xl font-noto font-semibold text-black">
+            <div className="border-t border-red-200 pt-4 space-y-2">
+              <div className="flex items-center justify-between text-lg font-medium text-black">
+                <span>Subtotal:</span>
+                <span>₱{totalPrice.toFixed(2)}</span>
+              </div>
+              {takeoutBoxFee > 0 && (
+                <div className="flex items-center justify-between text-lg font-medium text-black">
+                  <span>📦 Takeout Box Fee:</span>
+                  <span>₱{takeoutBoxFee.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="flex items-center justify-between text-2xl font-noto font-semibold text-black pt-2 border-t border-red-200">
                 <span>Total:</span>
-                <span>₱{totalPrice}</span>
+                <span>₱{finalTotalPrice.toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -398,7 +415,7 @@ Please confirm this order to proceed. Thank you for choosing ClickEats! 🥟
                   <p className="text-sm text-gray-600 mb-1">{selectedPaymentMethod.name}</p>
                   <p className="font-mono text-black font-medium">{selectedPaymentMethod.account_number}</p>
                   <p className="text-sm text-gray-600 mb-3">Account Name: {selectedPaymentMethod.account_name}</p>
-                  <p className="text-xl font-semibold text-black">Amount: ₱{totalPrice}</p>
+                  <p className="text-xl font-semibold text-black">Amount: ₱{finalTotalPrice.toFixed(2)}</p>
                 </div>
                 <div className="flex-shrink-0">
                   <img 
@@ -487,10 +504,20 @@ Please confirm this order to proceed. Thank you for choosing ClickEats! 🥟
             ))}
           </div>
           
-          <div className="border-t border-red-200 pt-4 mb-6">
-            <div className="flex items-center justify-between text-2xl font-noto font-semibold text-black">
+          <div className="border-t border-red-200 pt-4 mb-6 space-y-2">
+            <div className="flex items-center justify-between text-lg font-medium text-black">
+              <span>Subtotal:</span>
+              <span>₱{totalPrice.toFixed(2)}</span>
+            </div>
+            {takeoutBoxFee > 0 && (
+              <div className="flex items-center justify-between text-lg font-medium text-black">
+                <span>📦 Takeout Box Fee:</span>
+                <span>₱{takeoutBoxFee.toFixed(2)}</span>
+              </div>
+            )}
+            <div className="flex items-center justify-between text-2xl font-noto font-semibold text-black pt-2 border-t border-red-200">
               <span>Total:</span>
-              <span>₱{totalPrice}</span>
+              <span>₱{finalTotalPrice.toFixed(2)}</span>
             </div>
           </div>
 

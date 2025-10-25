@@ -23,7 +23,7 @@ interface MenuProps {
 
 const Menu: React.FC<MenuProps> = ({ menuItems, addToCart, cartItems, updateQuantity }) => {
   const { categories } = useCategories();
-  const [activeCategory, setActiveCategory] = React.useState('hot-coffee');
+  const [activeCategory, setActiveCategory] = React.useState('');
 
   // Preload images when menu items change
   React.useEffect(() => {
@@ -57,16 +57,15 @@ const Menu: React.FC<MenuProps> = ({ menuItems, addToCart, cartItems, updateQuan
   };
 
   React.useEffect(() => {
-    if (categories.length > 0) {
-      // Set default to dim-sum if it exists, otherwise first category
-      const defaultCategory = categories.find(cat => cat.id === 'dim-sum') || categories[0];
-      if (!categories.find(cat => cat.id === activeCategory)) {
-        setActiveCategory(defaultCategory.id);
-      }
+    if (categories.length > 0 && !activeCategory) {
+      // Set default to first category
+      setActiveCategory(categories[0].id);
     }
   }, [categories, activeCategory]);
 
   React.useEffect(() => {
+    if (categories.length === 0) return;
+    
     const handleScroll = () => {
       const sections = categories.map(cat => document.getElementById(cat.id)).filter(Boolean);
       const scrollPosition = window.scrollY + 200;
@@ -82,7 +81,7 @@ const Menu: React.FC<MenuProps> = ({ menuItems, addToCart, cartItems, updateQuan
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [categories]);
 
 
   return (
@@ -93,10 +92,12 @@ const Menu: React.FC<MenuProps> = ({ menuItems, addToCart, cartItems, updateQuan
       />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center mb-12">
-        <h2 className="text-4xl font-noto font-semibold text-black mb-4">Our Menu</h2>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          Discover our selection of authentic dim sum, flavorful noodles, and traditional Asian dishes, 
-          all prepared with fresh ingredients and authentic techniques.
+        <div className="mb-4">
+          <span className="text-5xl">🍔</span>
+        </div>
+        <h2 className="text-4xl font-bold text-terraza-dark mb-3">What'll You Have Today?</h2>
+        <p className="text-lg text-terraza-taupe max-w-2xl mx-auto font-medium">
+          All your favorites, right here! 🤤
         </p>
       </div>
 
