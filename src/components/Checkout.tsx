@@ -26,9 +26,26 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, totalPrice, onBack }) =>
   const [referenceNumber, setReferenceNumber] = useState('');
   const [notes, setNotes] = useState('');
 
-  // Calculate takeout box fee for pickup and delivery (per item)
-  const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
-  const takeoutBoxFee = (serviceType === 'pickup' || serviceType === 'delivery') ? totalItems * 10 : 0;
+  // Calculate takeout box fee for pickup and delivery (per item, varies by category)
+  const calculateTakeoutBoxFee = () => {
+    if (serviceType === 'dine-in') return 0;
+    
+    return cartItems.reduce((total, item) => {
+      let itemFee = 0;
+      
+      if (item.category === 'crafted-drinks') {
+        itemFee = 5; // ₱5 per crafted drink item
+      } else if (item.category === 'beverages') {
+        itemFee = 0; // Free for beverages
+      } else {
+        itemFee = 10; // ₱10 per item for all other categories
+      }
+      
+      return total + (itemFee * item.quantity);
+    }, 0);
+  };
+  
+  const takeoutBoxFee = calculateTakeoutBoxFee();
   const finalTotalPrice = totalPrice + takeoutBoxFee;
 
   React.useEffect(() => {
@@ -93,7 +110,7 @@ ${cartItems.map(item => {
 }).join('\n')}
 
 💰 Subtotal: ₱${totalPrice.toFixed(2)}
-${takeoutBoxFee > 0 ? `📦 Takeout Box Fee (₱10 per item): ₱${takeoutBoxFee.toFixed(2)}` : ''}
+${takeoutBoxFee > 0 ? `📦 Takeout Box Fee: ₱${takeoutBoxFee.toFixed(2)}` : ''}
 ${serviceType === 'delivery' ? `🛵 DELIVERY FEE:` : ''}
 
 💰 TOTAL: ₱${finalTotalPrice.toFixed(2)}
@@ -164,7 +181,7 @@ Please confirm this order to proceed. Thank you for choosing Terraza Navarro! �
               </div>
               {takeoutBoxFee > 0 && (
                 <div className="flex items-center justify-between text-lg font-medium text-black">
-                  <span>📦 Takeout Box Fee (₱10 per item):</span>
+                  <span>📦 Takeout Box Fee:</span>
                   <span>₱{takeoutBoxFee.toFixed(2)}</span>
                 </div>
               )}
@@ -512,7 +529,7 @@ Please confirm this order to proceed. Thank you for choosing Terraza Navarro! �
             </div>
             {takeoutBoxFee > 0 && (
               <div className="flex items-center justify-between text-lg font-medium text-black">
-                <span>📦 Takeout Box Fee (₱10 per item):</span>
+                <span>📦 Takeout Box Fee:</span>
                 <span>₱{takeoutBoxFee.toFixed(2)}</span>
               </div>
             )}

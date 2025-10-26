@@ -91,15 +91,6 @@ const Menu: React.FC<MenuProps> = ({ menuItems, addToCart, cartItems, updateQuan
         onCategoryClick={handleCategoryClick}
       />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="text-center mb-12">
-        <div className="mb-4">
-          <span className="text-5xl">🍔</span>
-        </div>
-        <h2 className="text-4xl font-bold text-terraza-dark mb-3">What'll You Have Today?</h2>
-        <p className="text-lg text-terraza-taupe max-w-2xl mx-auto font-medium">
-          All your favorites, right here! 🤤
-        </p>
-      </div>
 
       {categories.map((category) => {
         const categoryItems = menuItems.filter(item => item.category === category.id);
