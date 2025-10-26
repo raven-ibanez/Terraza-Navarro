@@ -26,8 +26,9 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, totalPrice, onBack }) =>
   const [referenceNumber, setReferenceNumber] = useState('');
   const [notes, setNotes] = useState('');
 
-  // Calculate takeout box fee for pickup and delivery
-  const takeoutBoxFee = (serviceType === 'pickup' || serviceType === 'delivery') ? 10 : 0;
+  // Calculate takeout box fee for pickup and delivery (per item)
+  const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const takeoutBoxFee = (serviceType === 'pickup' || serviceType === 'delivery') ? totalItems * 10 : 0;
   const finalTotalPrice = totalPrice + takeoutBoxFee;
 
   React.useEffect(() => {
@@ -92,7 +93,7 @@ ${cartItems.map(item => {
 }).join('\n')}
 
 💰 Subtotal: ₱${totalPrice.toFixed(2)}
-${takeoutBoxFee > 0 ? `📦 Takeout Box Fee: ₱${takeoutBoxFee.toFixed(2)}` : ''}
+${takeoutBoxFee > 0 ? `📦 Takeout Box Fee (₱10 per item): ₱${takeoutBoxFee.toFixed(2)}` : ''}
 ${serviceType === 'delivery' ? `🛵 DELIVERY FEE:` : ''}
 
 💰 TOTAL: ₱${finalTotalPrice.toFixed(2)}
@@ -163,7 +164,7 @@ Please confirm this order to proceed. Thank you for choosing Terraza Navarro! �
               </div>
               {takeoutBoxFee > 0 && (
                 <div className="flex items-center justify-between text-lg font-medium text-black">
-                  <span>📦 Takeout Box Fee:</span>
+                  <span>📦 Takeout Box Fee (₱10 per item):</span>
                   <span>₱{takeoutBoxFee.toFixed(2)}</span>
                 </div>
               )}
@@ -511,7 +512,7 @@ Please confirm this order to proceed. Thank you for choosing Terraza Navarro! �
             </div>
             {takeoutBoxFee > 0 && (
               <div className="flex items-center justify-between text-lg font-medium text-black">
-                <span>📦 Takeout Box Fee:</span>
+                <span>📦 Takeout Box Fee (₱10 per item):</span>
                 <span>₱{takeoutBoxFee.toFixed(2)}</span>
               </div>
             )}
