@@ -17,7 +17,12 @@ const AdminDashboard: React.FC = () => {
   const [loginError, setLoginError] = useState('');
   const { menuItems, loading, addMenuItem, updateMenuItem, deleteMenuItem } = useMenu();
   const { categories } = useCategories();
-  const [currentView, setCurrentView] = useState<'dashboard' | 'items' | 'add' | 'edit' | 'categories' | 'payments' | 'settings'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'items' | 'add' | 'edit' | 'categories' | 'payments' | 'settings' | 'change-password'>('dashboard');
+  const [adminPassword, setAdminPassword] = useState('TerrazaNavarro@Admin!2025');
+  const [currentPasswordInput, setCurrentPasswordInput] = useState('');
+  const [newPasswordInput, setNewPasswordInput] = useState('');
+  const [confirmPasswordInput, setConfirmPasswordInput] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -232,13 +237,44 @@ const AdminDashboard: React.FC = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === 'TerrazaNavarro@Admin!2025') {
+    if (password === adminPassword) {
       setIsAuthenticated(true);
       localStorage.setItem('beracah_admin_auth', 'true');
       setLoginError('');
     } else {
       setLoginError('Invalid password');
     }
+  };
+
+  const handleChangePassword = () => {
+    setPasswordError('');
+    
+    if (!currentPasswordInput || !newPasswordInput || !confirmPasswordInput) {
+      setPasswordError('Please fill in all fields');
+      return;
+    }
+
+    if (currentPasswordInput !== adminPassword) {
+      setPasswordError('Current password is incorrect');
+      return;
+    }
+
+    if (newPasswordInput !== confirmPasswordInput) {
+      setPasswordError('New passwords do not match');
+      return;
+    }
+
+    if (newPasswordInput.length < 6) {
+      setPasswordError('Password must be at least 6 characters long');
+      return;
+    }
+
+    setAdminPassword(newPasswordInput);
+    setCurrentPasswordInput('');
+    setNewPasswordInput('');
+    setConfirmPasswordInput('');
+    setCurrentView('settings');
+    alert('Password changed successfully!');
   };
 
   const handleLogout = () => {
@@ -915,12 +951,110 @@ const AdminDashboard: React.FC = () => {
                 </button>
                 <h1 className="text-2xl font-playfair font-semibold text-black">Site Settings</h1>
               </div>
+              <button
+                onClick={() => setCurrentView('change-password')}
+                className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
+              >
+                <Lock className="h-4 w-4" />
+                <span>Change Password</span>
+              </button>
             </div>
           </div>
         </div>
 
         <div className="max-w-4xl mx-auto px-4 py-8">
-          <SiteSettingsManager />
+          <SiteSettingsManager onChangePassword={() => setCurrentView('change-password')} />
+        </div>
+      </div>
+    );
+  }
+
+  // Change Password View
+  if (currentView === 'change-password') {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="bg-white shadow-sm border-b">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={() => setCurrentView('settings')}
+                  className="flex items-center space-x-2 text-gray-600 hover:text-black transition-colors duration-200"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                  <span>Back to Settings</span>
+                </button>
+                <h1 className="text-2xl font-playfair font-semibold text-black">Change Password</h1>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-2xl mx-auto px-4 py-8">
+          <div className="bg-white rounded-xl shadow-sm p-8">
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Current Password
+                </label>
+                <input
+                  type="password"
+                  value={currentPasswordInput}
+                  onChange={(e) => setCurrentPasswordInput(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  placeholder="Enter current password"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  value={newPasswordInput}
+                  onChange={(e) => setNewPasswordInput(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  placeholder="Enter new password (min 6 characters)"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Confirm New Password
+                </label>
+                <input
+                  type="password"
+                  value={confirmPasswordInput}
+                  onChange={(e) => setConfirmPasswordInput(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  placeholder="Confirm new password"
+                />
+              </div>
+
+              {passwordError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                  {passwordError}
+                </div>
+              )}
+
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setCurrentView('settings')}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleChangePassword}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 flex items-center justify-center space-x-2"
+                >
+                  <Save className="h-4 w-4" />
+                  <span>Change Password</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );

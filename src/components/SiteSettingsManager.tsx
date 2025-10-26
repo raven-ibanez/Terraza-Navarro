@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { Save, Upload, X } from 'lucide-react';
+import { Save, Upload, X, Lock } from 'lucide-react';
 import { useSiteSettings } from '../hooks/useSiteSettings';
 import { useImageUpload } from '../hooks/useImageUpload';
 
-const SiteSettingsManager: React.FC = () => {
+interface SiteSettingsManagerProps {
+  onChangePassword?: () => void;
+}
+
+const SiteSettingsManager: React.FC<SiteSettingsManagerProps> = ({ onChangePassword }) => {
   const { siteSettings, loading, updateSiteSettings } = useSiteSettings();
   const { uploadImage, uploading } = useImageUpload();
   const [isEditing, setIsEditing] = useState(false);
@@ -274,6 +278,20 @@ const SiteSettingsManager: React.FC = () => {
             <p className="text-gray-600">{siteSettings?.instagram_url || 'Not set'}</p>
           )}
         </div>
+
+        {/* Change Password Section */}
+        {onChangePassword && (
+          <div className="border-t border-gray-200 pt-6">
+            <h3 className="text-lg font-semibold text-black mb-4">Security</h3>
+            <button
+              onClick={onChangePassword}
+              className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
+            >
+              <Lock className="h-4 w-4" />
+              <span>Change Admin Password</span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
