@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Instagram } from 'lucide-react';
 import { useSiteSettings } from '../hooks/useSiteSettings';
 
 interface HeaderProps {
@@ -13,7 +13,7 @@ const Header: React.FC<HeaderProps> = ({ cartItemsCount, onCartClick, onMenuClic
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-terraza-subtle shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="flex items-center justify-between h-16">
           <button 
             onClick={onMenuClick}
@@ -35,12 +35,30 @@ const Header: React.FC<HeaderProps> = ({ cartItemsCount, onCartClick, onMenuClic
               {loading ? (
                 <div className="w-24 h-6 bg-terraza-subtle rounded animate-pulse" />
               ) : (
-                "Terraza Navarro ✨"
+                siteSettings?.site_name || "Terraza Navarro"
               )}
             </h1>
           </button>
 
+          {/* Center tagline */}
+          {!loading && siteSettings?.site_description && (
+            <p className="hidden md:block text-sm text-terraza-brown font-medium absolute left-1/2 transform -translate-x-1/2">
+              {siteSettings.site_description}
+            </p>
+          )}
+
           <div className="flex items-center space-x-2">
+            {siteSettings?.instagram_url && (
+              <a
+                href={siteSettings.instagram_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 text-terraza-taupe hover:text-terraza-dark hover:bg-terraza-cream rounded-full transition-all duration-200"
+                aria-label="Visit our Instagram"
+              >
+                <Instagram className="h-6 w-6" />
+              </a>
+            )}
             <button 
               onClick={onCartClick}
               className="relative p-2 text-terraza-taupe hover:text-terraza-dark hover:bg-terraza-cream rounded-full transition-all duration-200"

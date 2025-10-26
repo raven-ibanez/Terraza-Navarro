@@ -25,7 +25,8 @@ export const useSiteSettings = () => {
         site_logo: data.find(s => s.id === 'site_logo')?.value || '',
         site_description: data.find(s => s.id === 'site_description')?.value || '',
         currency: data.find(s => s.id === 'currency')?.value || 'PHP',
-        currency_code: data.find(s => s.id === 'currency_code')?.value || 'PHP'
+        currency_code: data.find(s => s.id === 'currency_code')?.value || 'PHP',
+        instagram_url: data.find(s => s.id === 'instagram_url')?.value || 'https://instagram.com'
       };
 
       setSiteSettings(settings);
@@ -61,18 +62,35 @@ export const useSiteSettings = () => {
     try {
       setError(null);
 
-      const updatePromises = Object.entries(updates).map(([key, value]) =>
-        supabase
+      // Update or insert settings
+      const updatePromises = Object.entries(updates).map(async ([key, value]) => {
+        // Check if the setting exists
+        const { data: existingData } = await supabase
           .from('site_settings')
-          .update({ value })
+          .select('id')
           .eq('id', key)
-      );
+          .single();
+
+        if (existingData) {
+          // Update existing setting
+          return supabase
+            .from('site_settings')
+            .update({ value })
+            .eq('id', key);
+        } else {
+          // Insert new setting
+          return supabase
+            .from('site_settings')
+            .insert({ id: key, value, type: 'text' });
+        }
+      });
 
       const results = await Promise.all(updatePromises);
       
       // Check for errors
       const errors = results.filter(result => result.error);
       if (errors.length > 0) {
+        console.error('Update errors:', errors);
         throw new Error('Some updates failed');
       }
 

@@ -11,7 +11,8 @@ const SiteSettingsManager: React.FC = () => {
     site_name: '',
     site_description: '',
     currency: '',
-    currency_code: ''
+    currency_code: '',
+    instagram_url: ''
   });
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string>('');
@@ -22,7 +23,8 @@ const SiteSettingsManager: React.FC = () => {
         site_name: siteSettings.site_name,
         site_description: siteSettings.site_description,
         currency: siteSettings.currency,
-        currency_code: siteSettings.currency_code
+        currency_code: siteSettings.currency_code,
+        instagram_url: siteSettings.instagram_url || ''
       });
       setLogoPreview(siteSettings.site_logo);
     }
@@ -64,6 +66,7 @@ const SiteSettingsManager: React.FC = () => {
         site_description: formData.site_description,
         currency: formData.currency,
         currency_code: formData.currency_code,
+        instagram_url: formData.instagram_url || '',
         site_logo: logoUrl
       });
 
@@ -71,6 +74,7 @@ const SiteSettingsManager: React.FC = () => {
       setLogoFile(null);
     } catch (error) {
       console.error('Error saving site settings:', error);
+      alert('Failed to save settings. Please try again.');
     }
   };
 
@@ -80,7 +84,8 @@ const SiteSettingsManager: React.FC = () => {
         site_name: siteSettings.site_name,
         site_description: siteSettings.site_description,
         currency: siteSettings.currency,
-        currency_code: siteSettings.currency_code
+        currency_code: siteSettings.currency_code,
+        instagram_url: siteSettings.instagram_url || ''
       });
       setLogoPreview(siteSettings.site_logo);
     }
@@ -249,6 +254,25 @@ const SiteSettingsManager: React.FC = () => {
               <p className="text-lg font-medium text-black">{siteSettings?.currency_code}</p>
             )}
           </div>
+        </div>
+
+        {/* Instagram URL */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Instagram URL
+          </label>
+          {isEditing ? (
+            <input
+              type="url"
+              name="instagram_url"
+              value={formData.instagram_url}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              placeholder="https://instagram.com/yourusername"
+            />
+          ) : (
+            <p className="text-gray-600">{siteSettings?.instagram_url || 'Not set'}</p>
+          )}
         </div>
       </div>
     </div>

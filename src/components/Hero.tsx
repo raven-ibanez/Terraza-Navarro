@@ -1,6 +1,9 @@
 import React from 'react';
+import { useSiteSettings } from '../hooks/useSiteSettings';
 
 const Hero: React.FC = () => {
+  const { siteSettings, loading } = useSiteSettings();
+
   return (
     <section className="relative bg-gradient-to-br from-terraza-warm via-terraza-beige to-terraza-light py-16 px-4">
       <div className="max-w-4xl mx-auto text-center">
@@ -8,10 +11,20 @@ const Hero: React.FC = () => {
           <span className="text-6xl">🍴</span>
         </div>
         <h1 className="text-4xl md:text-5xl font-bold text-terraza-dark mb-4 animate-fade-in" style={{ fontFamily: 'system-ui, -apple-system' }}>
-          Welcome to <span className="text-terraza-accent">Terraza Navarro</span>
+          {loading ? (
+            <div className="h-12 bg-terraza-subtle rounded w-64 mx-auto animate-pulse" />
+          ) : (
+            <>
+              Welcome to <span className="text-terraza-accent">{siteSettings?.site_name || 'Terraza Navarro'}</span>
+            </>
+          )}
         </h1>
         <p className="text-lg md:text-xl text-terraza-brown mb-6 max-w-2xl mx-auto animate-slide-up font-medium">
-          🍃🍃 Where flavors meet the open air!
+          🍃🍃 {loading ? (
+            <span className="inline-block h-6 bg-terraza-subtle rounded w-48 animate-pulse" />
+          ) : (
+            siteSettings?.site_description || 'Where flavors meet the open air!'
+          )}
         </p>
         
         {/* Business Information */}
