@@ -18,7 +18,11 @@ const AdminDashboard: React.FC = () => {
   const { menuItems, loading, addMenuItem, updateMenuItem, deleteMenuItem } = useMenu();
   const { categories } = useCategories();
   const [currentView, setCurrentView] = useState<'dashboard' | 'items' | 'add' | 'edit' | 'categories' | 'payments' | 'settings' | 'change-password'>('dashboard');
-  const [adminPassword, setAdminPassword] = useState('TerrazaNavarro@Admin!2025');
+  const [adminPassword, setAdminPassword] = useState(() => {
+    const savedPassword = localStorage.getItem('admin_password');
+    console.log('Initializing adminPassword:', savedPassword || 'TerrazaNavarro@Admin!2025');
+    return savedPassword || 'TerrazaNavarro@Admin!2025';
+  });
   const [currentPasswordInput, setCurrentPasswordInput] = useState('');
   const [newPasswordInput, setNewPasswordInput] = useState('');
   const [confirmPasswordInput, setConfirmPasswordInput] = useState('');
@@ -237,6 +241,9 @@ const AdminDashboard: React.FC = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Login attempt - entered password:', password);
+    console.log('Login attempt - adminPassword:', adminPassword);
+    console.log('Login attempt - match:', password === adminPassword);
     if (password === adminPassword) {
       setIsAuthenticated(true);
       localStorage.setItem('beracah_admin_auth', 'true');
@@ -269,12 +276,28 @@ const AdminDashboard: React.FC = () => {
       return;
     }
 
-    setAdminPassword(newPasswordInput);
+    // Update password in memory and save to localStorage
+    const updatedPassword = newPasswordInput;
+    setAdminPassword(updatedPassword);
+    localStorage.setItem('admin_password', updatedPassword);
+    
+    console.log('Password changed to:', updatedPassword);
+    console.log('Saved to localStorage:', localStorage.getItem('admin_password'));
+    
+    // Clear form inputs
     setCurrentPasswordInput('');
     setNewPasswordInput('');
     setConfirmPasswordInput('');
-    setCurrentView('settings');
-    alert('Password changed successfully!');
+    
+    // Logout user automatically
+    localStorage.removeItem('beracah_admin_auth');
+    setPassword('');
+    setIsAuthenticated(false);
+    
+    // Show alert after logout
+    setTimeout(() => {
+      alert('Password changed successfully! Please log in with your new password.');
+    }, 100);
   };
 
   const handleLogout = () => {
